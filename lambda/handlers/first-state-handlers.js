@@ -77,7 +77,7 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
               // FORM RESPONSE SAYING POSITIONS
               const search = this.attributes.currentSearch;
               this.attributes.expecting = 'stats';
-              this.emit(':ask', `${formatString(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday}. This time last season ${formatString(selectedTeam)} were ${formatPosition(search.lastYearsPosition)}. Would you like to compare the stats?`, 'Would you like to compare the stats?');
+              this.emit(':ask', `${formatString(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday}. This time last season ${formatString(selectedTeam)} were ${search.lastYearsPosition === undefined ? 'in the Championship. How else can I help?' : formatPosition(search.lastYearsPosition) + 'Would you like to compare the stats?'}`, `${search.lastYearsPosition === undefined ? 'How else can I help?' : 'Would you like to compare the stats?'}`); // eslint-disable-line
             })
             .catch((error) => {
               console.log('ERROR WITH REQUEST 2: ', error);
