@@ -1,0 +1,39 @@
+{
+  "intents": [
+    {
+      "intent": "CompareSeasons",
+      "slots": [{
+        "name": "team",
+        "type": "team"
+        }]
+    }
+    {
+      "intent": "AMAZON.NextIntent"
+    },
+    {
+      "intent": "AMAZON.PreviousIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.RepeatIntent"
+    },
+    {
+      "intent": "AMAZON.StartOverIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+
+    {
+      "intent": "AMAZON.StopIntent"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+CompareSeasons where were {team} last year?
+CompareSeasons where were {team} this time last year?
+
+AMAZON.StartOverIntent return to start
+AMAZON.StartOverIntent return to beginning
+AMAZON.StartOverIntent return to menu
+AMAZON.StartOverIntent return to main menu
+AMAZON.StartOverIntent main menu
+AMAZON.StartOverIntent menu
+AMAZON.StartOverIntent go to beginning
+AMAZON.StartOverIntent go to menu
+AMAZON.StartOverIntent go to main menu
+AMAZON.StartOverIntent show me the main menu
+AMAZON.StartOverIntent show me the menu
+AMAZON.StartOverIntent take me to the menu
+AMAZON.StartOverIntent take me to the main menu
+AMAZON.StartOverIntent back to menu
+AMAZON.StartOverIntent back to main menu
+
+AMAZON.YesIntent yeah
+AMAZON.YesIntent yep
+AMAZON.YesIntent yup
+AMAZON.YesIntent yeh
+
+AMAZON.StopIntent close
+AMAZON.StopIntent finish
+AMAZON.StopIntent finished
+AMAZON.StopIntent shut up

@@ -1,0 +1,27 @@
+{
+  "name": "stat-attack",
+  "version": "4.0.0",
+  "description": "Stat Attack",
+  "main": "index.js",
+  "author": "MonkStudios",
+  "scripts": {
+    "dd": "serverless deploy -v --stage dev",
+    "ud": "serverless deploy function -f funcOne --stage dev"
+  },
+  "dependencies": {
+    "alexa-sdk": "^1.0.14",
+    "moment": "^2.19.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "babel-preset-node6": "^11.0.0",
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "serverless-plugin-optimize": "^3.0.3-rc.1",
+    "serverless-plugin-scripts": "^1.0.2"
+  }
+}

@@ -1,0 +1,55 @@
+service: stat-attack
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: ${opt:stage, self:custom.defaultStage}
+  profile: ${self:custom.profiles.${self:provider.stage}}
+  region: ${self:custom.regions.${self:provider.stage}}
+  role: ${self:custom.roles.${self:provider.stage}}
+  memorySize: 1536
+  timeout: 7
+  versionFunctions: true # if set to false, past versions can't be invoked by their qualifier
+
+plugins:
+  - serverless-plugin-optimize
+  - serverless-plugin-scripts
+
+package:
+  individually: true
+
+functions:
+  funcOne:
+    handler: lambda/index.handler
+    name: stat-attack-${self:provider.stage} # name as displayed on the AWS Lambda dashboard
+    description: Stat Attack Alexa
+    events:
+      - alexaSkill
+    environment:
+      APP_ID: ${file(env.yml):APP_ID}
+      DYNAMODB_TABLE_NAME: ${file(env.yml):DYNAMODB_TABLE_NAME}
+      API_TOKEN: ${file(env.yml):API_TOKEN}
+
+custom:
+  defaultStage: dev
+  profiles:
+    dev: personal
+  regions:
+    dev: eu-west-1
+  roles:
+    dev: arn:aws:iam::852347509954:role/lambda_full
+  optimize:
+    debug: false # set to true to keep _optimize folder, required if running npm test
+    minify: false # no need to minify every time
+    global: false # minify imported node modules - significantly increases build time
+    presets: ['babel-preset-node6'] # lighter alternative to es2015 default preset, which isn't necessary now that AWS Lambda supports Node v6
+  scripts:
+    hooks: # any other custom scripts can be run at any stage of the deployment process
+      'deploy:cleanup': echo cleanup
+      'deploy:initialize': echo initialize
+      'deploy:setupProviderConfiguration': echo setupProviderConfiguration
+      'deploy:createDeploymentArtifacts': echo createDeploymentArtifacts
+      'deploy:compileFunctions': echo compileFunctions
+      'deploy:compileEvents': echo compileEvents
+      'deploy:deploy': echo deploy
+      'deploy:function:deploy': echo function:deploy
