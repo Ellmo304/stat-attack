@@ -5,7 +5,7 @@ import {
 } from './constants/constants';
 
 import firstStateHandlers from './handlers/first-state-handlers';
-// import mainStateHandlers from './handlers/main-state-handlers';
+import mainStateHandlers from './handlers/main-state-handlers';
 
 module.exports.handler = function (event, context) {
   const alexa = Alexa.handler(event, context);
@@ -13,7 +13,8 @@ module.exports.handler = function (event, context) {
   alexa.dynamoDBTableName = DYNAMODB_TABLE_NAME;
   alexa.appId = APP_ID;
   alexa.registerHandlers(
-    firstStateHandlers
+    firstStateHandlers,
+    mainStateHandlers
   );
 
   alexa.execute();

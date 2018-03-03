@@ -7,7 +7,7 @@ module.exports = {
   // Skill states
   STATES: {
     FIRST: '',
-    // MAIN: 'MAIN',
+    MAIN: 'MAIN',
   },
 
 //

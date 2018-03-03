@@ -63,8 +63,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
             fixtures.push({ home: data.fixtures[i].homeTeamName, away: data.fixtures[i].awayTeamName });
           }
         }
-        console.log('FIXTURES: ', fixtures);
-        this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(fixtures)}`, 'How else can I help?');
+        this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(fixtures)} How else can I help?`, 'How else can I help?');
       })
       .catch((err) => {
         console.log('ERROR: ', err);
@@ -168,10 +167,6 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     }
   },
 
-  'AMAZON.StopIntent': function () {
-    this.emit(':tell', 'Goodbye!');
-  },
-
   'ReadTable': function () {
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
@@ -203,6 +198,10 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'AMAZON.StartOverIntent': function () {
     this.emitWithState('MainMenu');
+  },
+
+  'AMAZON.StopIntent': function () {
+    this.emit(':tell', 'Goodbye!');
   },
 
   'AMAZON.CancelIntent': function () {
