@@ -11,6 +11,12 @@ ReadTable give me the current table
 ReadTable give me the table
 ReadTable give me the league table
 
+ReadFixtures What are this weeks fixtures
+ReadFixtures What are this weekends fixtures
+ReadFixtures What are the fixtures
+ReadFixtures What are the remaining fixtures
+ReadFixtures What are the remaining fixtures this week
+ReadFixtures What are the remaining fixtures this weekend
 
 CompareSeasons where were {team} last year
 CompareSeasons where were {team} this time last year

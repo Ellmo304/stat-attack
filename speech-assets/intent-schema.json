@@ -11,6 +11,9 @@
       "intent": "ReadTable"
     },
     {
+      "intent": "ReadFixtures"
+    },
+    {
       "intent": "AMAZON.NextIntent"
     },
     {

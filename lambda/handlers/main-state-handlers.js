@@ -25,8 +25,6 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   },
 
-
-
   'AMAZON.StartOverIntent': function () {
     this.emitWithState('MainMenu');
   },
