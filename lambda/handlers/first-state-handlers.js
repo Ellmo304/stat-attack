@@ -147,9 +147,6 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
 
 });
 
-
-// url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year, current matchday
-// url: 'http://api.football-data.org/v1/competitions/426/leagueTable', // prem league last year
 // url: 'http://api.football-data.org/v1/teams/61', // chelsea team
 // url: 'http://api.football-data.org/v1/competitions/?season=2016',
 
