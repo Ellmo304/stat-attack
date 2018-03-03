@@ -1,3 +1,3 @@
 module.exports = function (team) {
-  return team.replace(/&/g, 'and');
+  return team.replace(/&/g, 'and').replace(/ FC/g, '').replace(/AFC /g, '');
 };

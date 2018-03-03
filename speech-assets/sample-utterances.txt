@@ -1,5 +1,19 @@
-CompareSeasons where were {team} last year?
-CompareSeasons where were {team} this time last year?
+ReadTable whats the table
+ReadTable whats the league table
+ReadTable whats the premier league table
+ReadTable read the premier league table
+ReadTable read the league table
+ReadTable read the table
+ReadTable read me the premier league table
+ReadTable read me the league table
+ReadTable read me the table
+ReadTable give me the current table
+ReadTable give me the table
+ReadTable give me the league table
+
+
+CompareSeasons where were {team} last year
+CompareSeasons where were {team} this time last year
 
 AMAZON.StartOverIntent return to start
 AMAZON.StartOverIntent return to beginning

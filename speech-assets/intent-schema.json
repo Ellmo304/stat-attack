@@ -6,7 +6,10 @@
         "name": "team",
         "type": "team"
         }]
-    }
+    },
+    {
+      "intent": "ReadTable"
+    },
     {
       "intent": "AMAZON.NextIntent"
     },
