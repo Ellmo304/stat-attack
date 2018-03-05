@@ -18,10 +18,13 @@ ReadFixtures What are the remaining fixtures
 ReadFixtures What are the remaining fixtures this week
 ReadFixtures What are the remaining fixtures this weekend
 
-ChooseSide {team}
+HandleTeamOnly {team}
 
-CompareSeasons where were {team} last year
-CompareSeasons where were {team} this time last year
+HandleTeamPhrase the {team}
+HandleTeamPhrase {team} news
+HandleTeamPhrase {team} please
+
+CompareSeasons compare seasons
 
 AMAZON.StartOverIntent return to start
 AMAZON.StartOverIntent return to beginning

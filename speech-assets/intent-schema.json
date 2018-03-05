@@ -1,14 +1,17 @@
 {
   "intents": [
     {
-      "intent": "CompareSeasons",
+      "intent": "CompareSeasons"
+    },
+    {
+      "intent": "HandleTeamOnly",
       "slots": [{
         "name": "team",
         "type": "team"
         }]
     },
     {
-      "intent": "ChooseSide",
+      "intent": "HandleTeamPhrase",
       "slots": [{
         "name": "team",
         "type": "team"

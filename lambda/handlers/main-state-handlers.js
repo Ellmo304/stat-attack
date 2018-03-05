@@ -1,25 +1,28 @@
 // Constants
 import rp from 'request-promise';
+import Moment from 'moment';
 import { CreateStateHandler } from 'alexa-sdk';
 import {
   GENERIC_REPROMPT,
   HELP_MESSAGE,
   API_TOKEN,
   WELCOME_SCREEN,
+  DIRECT_LAUNCHES,
   STATES
 } from '../constants/constants';
 
 // Helpers
 import formResponse from '../helpers/form-response';
-import formatPosition from '../helpers/format-position';
 import formatString from '../helpers/format-string';
-import snapSlot from '../helpers/snap-slot';
+import formatDay from '../helpers/format-day';
+// import snapSlot from '../helpers/snap-slot';
 import readFixtures from '../helpers/read-fixtures';
 
 // Handler
 const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'NewSession': function () {
+    delete this.attributes.expecting;
     // GET CURRENT MATCHDAY
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
@@ -31,23 +34,32 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
         const data = JSON.parse(response);
         this.attributes.currentMatchday = data.currentMatchday;
         // INSERT DIRECT LAUNCH LOGIC HERE SO I ALWAYS RETREIVE CURRENT MATCHDAY FIRST
-        this.emit(':ask', 'Welcome to Stat Attack, how can I help?', 'How can I help?');
-        // this.emit(':ask', 'Welcome to Premier league. You can pick a team, hear results, hear the table, or hear fixtures. Which will it be?', 'Pick a team, hear results, hear the table, or hear fixtures. Which will it be?');
+        if (this.event.request.intent && DIRECT_LAUNCHES.includes(this.event.request.intent.name)) {
+          this.emitWithState(`${this.event.request.intent.name}`);
+        }
+        else {
+          this.emitWithState('Welcome');
+        }
       })
       .catch((err) => {
         console.log('API ERROR: ', err);
-        this.emit(':ask', 'Welcome to Stat Attack, how can I help?', 'How can I help?');
+        this.emitWithState('Welcome');
       });
   },
 
   'Welcome': function () {
-    delete this.attributes.expecting;
+    if (this.attributes.myTeam) {
+      this.emit(':ask', `Welcome back to Premier League. I can give you ${formatString(this.attributes.myTeam)} news, another team, league table, or fixtures. Which will it be?`, `I can give you ${formatString(this.attributes.myTeam)} news, another team, league table, or fixtures. Which would you like?`);
+    }
+    else {
+      this.emit(':ask', 'Welcome back to Premier League. I can give you team news, league table, or fixtures. Which will it be?', 'I can give you team news, league table, or fixtures. Which would you like?');
+    }
   },
 
   'MainMenu': function () {
     // GO TO MAIN STATE & PLAY MENU (menu needs two states, one for with fav team, one without)
     if (this.attributes.myTeam) {
-      this.emit(':ask', `I can give you ${this.attributes.myTeam} news, another team, league table, or fixtures. Which will it be?`, `I can give you ${this.attributes.myTeam} news, another team, league table, or fixtures. Which would you like?`);
+      this.emit(':ask', `I can give you ${formatString(this.attributes.myTeam)} news, another team, league table, or fixtures. Which will it be?`, `I can give you ${formatString(this.attributes.myTeam)} news, another team, league table, or fixtures. Which would you like?`);
     }
     else {
       this.emit(':ask', 'I can give you team news, league table, or fixtures. Which will it be?', 'I can give you team news, league table, or fixtures. Which would you like?');
@@ -65,12 +77,16 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     })
       .then((response) => {
         const data = JSON.parse(response);
-        const fixtures = [];
+        const fixtures = {};
         for (let i = 0; i < data.fixtures.length; i++) {
           if (data.fixtures[i].status !== 'FINISHED') {
-            fixtures.push({ home: data.fixtures[i].homeTeamName, away: data.fixtures[i].awayTeamName });
+            if (!fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`]) {
+              fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`] = [];
+            }
+            fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`].push({ home: data.fixtures[i].homeTeamName, away: data.fixtures[i].awayTeamName, day: formatDay(Moment(data.fixtures[i].date).day()) });
           }
         }
+        console.log('FIXTURES: ', fixtures);
         this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(fixtures)} How else can I help?`, 'How else can I help?');
       })
       .catch((err) => {
@@ -79,84 +95,83 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
       });
   },
 
-  'CompareSeasons': function () {
-    delete this.attributes.expecting;
-    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
-      // GET CURRENT POSITION + CURRENT MATCHDAY
-      rp({
-        headers: { 'X-Auth-Token': API_TOKEN },
-        url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year, current matchday
-        dataType: 'json',
-        type: 'GET',
-      })
-        .then((response) => {
-          let data = JSON.parse(response);
-          console.log('DATA: ', data);
-          const selectedTeam = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
-          if (!selectedTeam) {
-            this.emit(':ask', 'Sorry, I didn\'t catch that, how can I help?', 'Sorry, I didn\'t catch that, how can I help?');
-          }
-          // const selectedTeam = 'Chelsea FC';
-          const thisYearsMatchday = data.matchday;
-          for (let i = 0; i < data.standing.length; i++) {
-            if (data.standing[i].teamName === selectedTeam) {
-              this.attributes.currentSearch = {
-                selectedTeam,
-                thisYearsMatchday,
-                thisYearsPosition: data.standing[i].position,
-                thisYearsPlayedGames: data.standing[i].playedGames,
-                thisYearsWins: data.standing[i].wins,
-                thisYearsDraws: data.standing[i].draws,
-                thisYearsLosses: data.standing[i].losses,
-                thisYearsGoalsFor: data.standing[i].goals,
-                thisYearsGoalsAgainst: data.standing[i].goalsAgainst,
-                thisYearsGoalDifference: data.standing[i].goalDifference,
-              };
-            }
-          }
-
-
-          // GET LAST YEARS POSITION AT THIS MATCHDAY
-          rp({
-            headers: { 'X-Auth-Token': API_TOKEN },
-            url: `http://api.football-data.org/v1/competitions/426/leagueTable/?matchday=${thisYearsMatchday}`, // prem league last year current matchday
-            dataType: 'json',
-            type: 'GET',
-          })
-            .then((result) => {
-              data = JSON.parse(result);
-              for (let i = 0; i < data.standing.length; i++) {
-                if (data.standing[i].teamName === selectedTeam) {
-                  this.attributes.currentSearch.lastYearsPosition = data.standing[i].position;
-                  this.attributes.currentSearch.lastYearsPlayedGames = data.standing[i].playedGames;
-                  this.attributes.currentSearch.lastYearsWins = data.standing[i].wins;
-                  this.attributes.currentSearch.lastYearsDraws = data.standing[i].draws;
-                  this.attributes.currentSearch.lastYearsLosses = data.standing[i].losses;
-                  this.attributes.currentSearch.lastYearsGoalsFor = data.standing[i].goals;
-                  this.attributes.currentSearch.lastYearsGoalsAgainst = data.standing[i].goalsAgainst;
-                  this.attributes.currentSearch.lastYearsGoalDifference = data.standing[i].goalDifference;
-                }
-              }
-
-              // FORM RESPONSE SAYING POSITIONS
-              const search = this.attributes.currentSearch;
-              this.attributes.expecting = 'stats';
-              this.emit(':ask', `${formatString(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday - 1}. This time last season ${formatString(selectedTeam)} were ${search.lastYearsPosition === undefined ? 'in the Championship. How else can I help?' : formatPosition(search.lastYearsPosition) + '. Would you like to compare the stats?'}`, `${search.lastYearsPosition === undefined ? 'How else can I help?' : 'Would you like to compare the stats?'}`); // eslint-disable-line
-            })
-            .catch((error) => {
-              console.log('ERROR WITH REQUEST 2: ', error);
-              this.emit(':tell', 'Goodbye');
-            });
-        })
-        .catch((err) => {
-          console.log('ERROR WITH REQUEST 1: ', err);
-          this.emit(':tell', 'Goodbye');
-        });
-    }
-    else {
-      this.emit(':ask', 'Sorry, I didn\'t catch that, how can I help?', 'Sorry, I didn\'t catch that, how can I help?');
-    }
-  },
+  // 'CompareSeasons': function () {
+  //   delete this.attributes.expecting;
+  //   if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
+  //     // GET CURRENT POSITION + CURRENT MATCHDAY
+  //     rp({
+  //       headers: { 'X-Auth-Token': API_TOKEN },
+  //       url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year, current matchday
+  //       dataType: 'json',
+  //       type: 'GET',
+  //     })
+  //       .then((response) => {
+  //         let data = JSON.parse(response);
+  //         console.log('DATA: ', data);
+  //         const selectedTeam = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
+  //         if (!selectedTeam) {
+  //           this.emit(':ask', 'Sorry, I didn\'t catch that, how can I help?', 'Sorry, I didn\'t catch that, how can I help?');
+  //         }
+  //         // const selectedTeam = 'Chelsea FC';
+  //         const thisYearsMatchday = data.matchday;
+  //         for (let i = 0; i < data.standing.length; i++) {
+  //           if (data.standing[i].teamName === selectedTeam) {
+  //             this.attributes.currentSearch = {
+  //               selectedTeam,
+  //               thisYearsMatchday,
+  //               thisYearsPosition: data.standing[i].position,
+  //               thisYearsPlayedGames: data.standing[i].playedGames,
+  //               thisYearsWins: data.standing[i].wins,
+  //               thisYearsDraws: data.standing[i].draws,
+  //               thisYearsLosses: data.standing[i].losses,
+  //               thisYearsGoalsFor: data.standing[i].goals,
+  //               thisYearsGoalsAgainst: data.standing[i].goalsAgainst,
+  //               thisYearsGoalDifference: data.standing[i].goalDifference,
+  //             };
+  //           }
+  //         }
+  //
+  //         // GET LAST YEARS POSITION AT THIS MATCHDAY
+  //         rp({
+  //           headers: { 'X-Auth-Token': API_TOKEN },
+  //           url: `http://api.football-data.org/v1/competitions/426/leagueTable/?matchday=${thisYearsMatchday}`, // prem league last year current matchday
+  //           dataType: 'json',
+  //           type: 'GET',
+  //         })
+  //           .then((result) => {
+  //             data = JSON.parse(result);
+  //             for (let i = 0; i < data.standing.length; i++) {
+  //               if (data.standing[i].teamName === selectedTeam) {
+  //                 this.attributes.currentSearch.lastYearsPosition = data.standing[i].position;
+  //                 this.attributes.currentSearch.lastYearsPlayedGames = data.standing[i].playedGames;
+  //                 this.attributes.currentSearch.lastYearsWins = data.standing[i].wins;
+  //                 this.attributes.currentSearch.lastYearsDraws = data.standing[i].draws;
+  //                 this.attributes.currentSearch.lastYearsLosses = data.standing[i].losses;
+  //                 this.attributes.currentSearch.lastYearsGoalsFor = data.standing[i].goals;
+  //                 this.attributes.currentSearch.lastYearsGoalsAgainst = data.standing[i].goalsAgainst;
+  //                 this.attributes.currentSearch.lastYearsGoalDifference = data.standing[i].goalDifference;
+  //               }
+  //             }
+  //
+  //             // FORM RESPONSE SAYING POSITIONS
+  //             const search = this.attributes.currentSearch;
+  //             this.attributes.expecting = 'stats';
+  //             this.emit(':ask', `${formatString(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday - 1}. This time last season ${formatString(selectedTeam)} were ${search.lastYearsPosition === undefined ? 'in the Championship. How else can I help?' : formatPosition(search.lastYearsPosition) + '. Would you like to compare the stats?'}`, `${search.lastYearsPosition === undefined ? 'How else can I help?' : 'Would you like to compare the stats?'}`); // eslint-disable-line
+  //           })
+  //           .catch((error) => {
+  //             console.log('ERROR WITH REQUEST 2: ', error);
+  //             this.emit(':tell', 'Goodbye');
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         console.log('ERROR WITH REQUEST 1: ', err);
+  //         this.emit(':tell', 'Goodbye');
+  //       });
+  //   }
+  //   else {
+  //     this.emit(':ask', 'Sorry, I didn\'t catch that, how can I help?', 'Sorry, I didn\'t catch that, how can I help?');
+  //   }
+  // },
 
   'AMAZON.YesIntent': function () {
     if (this.attributes.expecting === 'continueTable') {

@@ -4,11 +4,8 @@ import { CreateStateHandler } from 'alexa-sdk';
 import { STATES, API_TOKEN } from '../constants/constants';
 
 // Helpers
-// import formResponse from '../helpers/form-response';
-// import formatPosition from '../helpers/format-position';
-// import formatString from '../helpers/format-string';
+import formatString from '../helpers/format-string';
 import snapSlot from '../helpers/snap-slot';
-// import readFixtures from '../helpers/read-fixtures';
 
 // Handler
 const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
@@ -33,19 +30,13 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
         this.attributes.expecting = 'setup';
         this.emit(':ask', 'Welcome to Premier league. Would you like to set up a favourite team?', 'Would you like me to remember your favourite premier league team?');
       });
-
   },
 
   'ChooseSide': function () {
-    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value && this.attributes.expecting === 'awaitingTeam') {
-      this.attributes.myTeam = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
-      if (this.attributes.myTeam) {
-        this.attributes.expecting = 'confirmTeam';
-        this.emit(':ask', `You support ${this.attributes.myTeam}. Is this correct?`, `You support ${this.attributes.myTeam}. Is this correct?`);
-      }
-      else {
-        this.emitWithState('Unhandled');
-      }
+    this.attributes.myTeam = snapSlot(this.attributes.teamSlot);
+    if (this.attributes.myTeam) {
+      this.attributes.expecting = 'confirmTeam';
+      this.emit(':ask', `You support ${formatString(this.attributes.myTeam)}. Is this correct?`, `You support ${formatString(this.attributes.myTeam)}. Is this correct?`);
     }
     else {
       this.emitWithState('Unhandled');
@@ -91,10 +82,30 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
       this.emit(':ask', 'Would you like to set up a favourite team?', 'Would you like me to remember your favourite premier league team?');
     }
     else if (this.attributes.expecting === 'confirmTeam') {
-      this.emit(':ask', `You support ${this.attributes.myTeam}. Is this correct?`, `You support ${this.attributes.myTeam}. Is this correct?`);
+      this.emit(':ask', `You support ${formatString(this.attributes.myTeam)}. Is this correct?`, `You support ${formatString(this.attributes.myTeam)}. Is this correct?`);
     }
     else {
       this.emit(':ask', 'Sorry, I didn\'t catch that, which team do you support?', 'Sorry, I didn\'t catch that, which team do you support?');
+    }
+  },
+
+  'HandleTeamPhrase': function () {
+    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value && this.attributes.expecting === 'awaitingTeam') {
+      this.attributes.teamSlot = this.event.request.intent.slots.team.value.toLowerCase();
+      this.emitWithState('ChooseSide');
+    }
+    else {
+      this.emitWithState('Unhandled');
+    }
+  },
+
+  'HandleTeamOnly': function () {
+    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value && this.attributes.expecting === 'awaitingTeam') {
+      this.attributes.teamSlot = this.event.request.intent.slots.team.value.toLowerCase();
+      this.emitWithState('ChooseSide');
+    }
+    else {
+      this.emitWithState('Unhandled');
     }
   },
 

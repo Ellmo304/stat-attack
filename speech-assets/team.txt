@@ -1,11 +1,11 @@
 arsenal
-the gunners
+gunners
 arsenal F. C.
 A. F. C. bournemouth
 bournemouth
 brighton and hove albion
 brighton
-the seagulls
+seagulls
 burnley
 chelsea
 crystal palace
@@ -20,26 +20,27 @@ manchester city
 man city
 manchester united
 man united
-the red devils
+red devils
 newcastle united
 newcastle
+magpies
 southampton
-the saints
+saints
 stoke city
-the potters
+potters
 stoke
 swansea city
-the swans
+swans
 swansea
 tottenham hotspur
 tottenham hotspurs
 tottenham
 spurs
 watford
-the hornets
+hornets
 west bromwich albion
 west bromwich
 west brom
 west ham united
 west ham
-the hammers
+hammers
