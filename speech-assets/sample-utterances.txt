@@ -18,6 +18,8 @@ ReadFixtures What are the remaining fixtures
 ReadFixtures What are the remaining fixtures this week
 ReadFixtures What are the remaining fixtures this weekend
 
+ChooseSide {team}
+
 CompareSeasons where were {team} last year
 CompareSeasons where were {team} this time last year
 

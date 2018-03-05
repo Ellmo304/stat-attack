@@ -32,6 +32,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
         this.attributes.currentMatchday = data.currentMatchday;
         // INSERT DIRECT LAUNCH LOGIC HERE SO I ALWAYS RETREIVE CURRENT MATCHDAY FIRST
         this.emit(':ask', 'Welcome to Stat Attack, how can I help?', 'How can I help?');
+        // this.emit(':ask', 'Welcome to Premier league. You can pick a team, hear results, hear the table, or hear fixtures. Which will it be?', 'Pick a team, hear results, hear the table, or hear fixtures. Which will it be?');
       })
       .catch((err) => {
         console.log('API ERROR: ', err);
@@ -44,10 +45,17 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'MainMenu': function () {
-
+    // GO TO MAIN STATE & PLAY MENU (menu needs two states, one for with fav team, one without)
+    if (this.attributes.myTeam) {
+      this.emit(':ask', `I can give you ${this.attributes.myTeam} news, another team, league table, or fixtures. Which will it be?`, `I can give you ${this.attributes.myTeam} news, another team, league table, or fixtures. Which would you like?`);
+    }
+    else {
+      this.emit(':ask', 'I can give you team news, league table, or fixtures. Which will it be?', 'I can give you team news, league table, or fixtures. Which would you like?');
+    }
   },
 
   'ReadFixtures': function () {
+    delete this.attributes.expecting;
     // GET THE CURRENT GAMEWEEK'S FIXTURES
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
@@ -72,6 +80,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'CompareSeasons': function () {
+    delete this.attributes.expecting;
     if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
       // GET CURRENT POSITION + CURRENT MATCHDAY
       rp({
@@ -168,6 +177,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'ReadTable': function () {
+    delete this.attributes.expecting;
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
       url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year, current matchday

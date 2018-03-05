@@ -8,6 +8,13 @@
         }]
     },
     {
+      "intent": "ChooseSide",
+      "slots": [{
+        "name": "team",
+        "type": "team"
+        }]
+    },
+    {
       "intent": "ReadTable"
     },
     {
