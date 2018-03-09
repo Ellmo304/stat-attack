@@ -11,15 +11,56 @@ ReadTable give me the current table
 ReadTable give me the table
 ReadTable give me the league table
 
-ReadFixtures What are this weeks fixtures
-ReadFixtures What are this weekends fixtures
-ReadFixtures What are the fixtures
-ReadFixtures What are the remaining fixtures
-ReadFixtures What are the remaining fixtures this week
-ReadFixtures What are the remaining fixtures this weekend
+GetFixtures what are this weeks fixtures
+GetFixtures what are this weekends fixtures
+GetFixtures what are the fixtures
+GetFixtures what are the remaining fixtures
+GetFixtures what are the remaining fixtures this week
+GetFixtures what are the remaining fixtures this weekend
+
+GetResults what are the scores
+GetResults what are the scores so far
+GetResults what are the scores at the moment
+GetResults what are the current scores
+GetResults what are the scores this weekend
+GetResults what are the results this weekend
+GetResults what are the scores this week
+GetResults what are the results this week
+GetResults what are the results this week
+GetResults what were the results
+GetResults what were the scores
+GetResults what were the other scores
+GetResults what were the other results
+GetResults what were the premiership scores
+GetResults what are the premiership scores
+GetResults what were the premier league scores
+GetResults what are the premier league scores
+GetResults what were the league scores
+GetResults what are the league scores
+GetResults what were the premiership results
+GetResults what are the premiership results
+GetResults what were the premier league results
+GetResults what are the premier league results
+GetResults what were the league results
+GetResults what are the league results
+GetResults what was the {team} score
+GetResults what was the {team} result
+GetResults what's the {team} result
+GetResults what is the {team} result
+GetResults whats the {team} score
+GetResults what is the {team} score
+GetResults whats the current {team} score
+GetResults what is the current {team} score
+GetResults whats the {team} score at the moment
+GetResults what is the {team} score at the moment
+
 
 HandleTeamOnly {team}
 
+HandleTeamPhrase i support {team}
+HandleTeamPhrase my favourite team are {team}
+HandleTeamPhrase my team is {team}
+HandleTeamPhrase my team's {team}
 HandleTeamPhrase the {team}
 HandleTeamPhrase {team} news
 HandleTeamPhrase {team} please

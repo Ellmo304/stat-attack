@@ -1,22 +1,22 @@
 // Constants
 import rp from 'request-promise';
-import Moment from 'moment';
 import { CreateStateHandler } from 'alexa-sdk';
 import {
   GENERIC_REPROMPT,
   HELP_MESSAGE,
   API_TOKEN,
-  WELCOME_SCREEN,
   DIRECT_LAUNCHES,
   STATES
 } from '../constants/constants';
 
 // Helpers
-import formResponse from '../helpers/form-response';
 import formatString from '../helpers/format-string';
-import formatDay from '../helpers/format-day';
-// import snapSlot from '../helpers/snap-slot';
+import getRemainingFixtures from '../helpers/get-remaining-fixtures';
 import readFixtures from '../helpers/read-fixtures';
+import getCurrentResults from '../helpers/get-current-results';
+import readResults from '../helpers/read-results';
+import readTable from '../helpers/read-table';
+import snapSlot from '../helpers/snap-slot';
 
 // Handler
 const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
@@ -66,34 +66,39 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     }
   },
 
-  'ReadFixtures': function () {
+  'GetFixtures': function () {
     delete this.attributes.expecting;
     // GET THE CURRENT GAMEWEEK'S FIXTURES
-    rp({
-      headers: { 'X-Auth-Token': API_TOKEN },
-      url: `http://api.football-data.org/v1/competitions/445/fixtures/?matchday=${this.attributes.currentMatchday}`, // this gameweek's fixture list
-      dataType: 'json',
-      type: 'GET',
-    })
-      .then((response) => {
-        const data = JSON.parse(response);
-        const fixtures = {};
-        for (let i = 0; i < data.fixtures.length; i++) {
-          if (data.fixtures[i].status !== 'FINISHED') {
-            if (!fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`]) {
-              fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`] = [];
-            }
-            fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`].push({ home: data.fixtures[i].homeTeamName, away: data.fixtures[i].awayTeamName, day: formatDay(Moment(data.fixtures[i].date).day()) });
-          }
-        }
-        console.log('FIXTURES: ', fixtures);
-        this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(fixtures)} How else can I help?`, 'How else can I help?');
-      })
-      .catch((err) => {
-        console.log('ERROR: ', err);
-        this.emit(':ask', 'Sorry, I can\'t find fixture information at the moment. How else can I help?', 'How else can I help?');
-      });
+    getRemainingFixtures.call(this, this.attributes.currentMatchday);
   },
+
+  'TellFixtures': function () {
+    // NO REMAINING FIXTURES THIS WEEK, GET NEXT GAMEWEEKS FIXTURES (IF NOT LAST GAMEWEEK)
+    if (Object.keys(this.attributes.remainingFixtures).length === 0 && this.attributes.currentMatchday < 38) {
+      getRemainingFixtures.call(this, this.attributes.currentMatchday + 1);
+    }
+    // GOT FIXTURES, READ THEM TO USER
+    else {
+      this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(this.attributes.remainingFixtures)} How else can I help?`, 'How else can I help?');
+    }
+  },
+
+  'GetResults': function () {
+    // const team = this.event.request.intent.slots.team.value.toLowerCase() || false;
+    const team = this.event.request.intent.slots.team.value ? snapSlot(this.event.request.intent.slots.team.value.toLowerCase()) : false;
+    getCurrentResults.call(this, team, this.attributes.currentMatchday);
+  },
+
+  'TellResults': function () {
+    // IF NO RESULTS YET, GET THE LAST GAMEWEEK INSTEAD
+    if (this.attributes.currentResults[0].homeGoals === null) {
+      getCurrentResults.call(this, this.attributes.teamSlot, this.attributes.currentMatchday - 1);
+    }
+    else {
+      readResults.call(this, this.attributes.teamSlot, this.attributes.currentResults);
+    }
+  },
+
 
   // 'CompareSeasons': function () {
   //   delete this.attributes.expecting;
@@ -191,34 +196,9 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     }
   },
 
-  'ReadTable': function () {
+  'GetTable': function () {
     delete this.attributes.expecting;
-    rp({
-      headers: { 'X-Auth-Token': API_TOKEN },
-      url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year, current matchday
-      dataType: 'json',
-      type: 'GET',
-    })
-      .then((response) => {
-        const data = JSON.parse(response);
-        const standings = [];
-        for (let i = 0; i < data.standing.length; i++) {
-          standings.push({ name: data.standing[i].teamName, points: data.standing[i].points });
-        }
-        console.log('STANDINGS: ', standings);
-        this.attributes.standings = standings;
-        this.attributes.currentMatchday = data.matchday;
-        this.attributes.expecting = 'continueTable';
-        this.emit(
-          ':ask',
-          `Here are the current standings on matchday ${data.matchday}.
-          At the top of the table are ${formatString(standings[0].name)} with ${standings[0].points} points. They are followed by ${formatString(standings[1].name)} with ${standings[1].points} points, ${formatString(standings[2].name)} with ${standings[2].points} points and ${formatString(standings[3].name)} with ${standings[3].points} points. ${formatString(standings[4].name)} are fifth with ${standings[4].points} points, followed by ${formatString(standings[5].name)} with ${standings[5].points} points, ${formatString(standings[6].name)} with ${standings[6].points} points, ${formatString(standings[7].name)} with ${standings[7].points} points, ${formatString(standings[8].name)} with ${standings[8].points} points and ${formatString(standings[9].name)} with ${standings[9].points} points. Would you like to hear the rest of the table?`,
-          'Would you like me to read the bottom half of the table?'
-        );
-      })
-      .catch((err) => {
-        console.log('API Error: ', err);
-      });
+    readTable.call(this);
   },
 
   'AMAZON.StartOverIntent': function () {
@@ -234,9 +214,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AMAZON.HelpIntent': function () {
-    const response = HELP_MESSAGE;
-    const reprompt = GENERIC_REPROMPT;
-    formResponse.call(this, false, false, WELCOME_SCREEN, '', '', response, reprompt, false, 'body 6', false, false);
+    this.emit(':ask', HELP_MESSAGE, GENERIC_REPROMPT);
   },
 
   'Unhandled': function () {

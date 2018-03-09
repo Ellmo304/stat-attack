@@ -10,7 +10,7 @@ module.exports = {
     MAIN: 'MAIN',
   },
 
-  DIRECT_LAUNCHES: ['HandleTeamOnly', 'HandleTeamPhrase', 'ReadTable', 'ReadFixtures'],
+  DIRECT_LAUNCHES: ['HandleTeamOnly', 'HandleTeamPhrase', 'ReadTable', 'GetFixtures', 'GetResults'],
 
 //
 //

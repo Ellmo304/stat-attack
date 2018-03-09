@@ -18,10 +18,17 @@
         }]
     },
     {
+      "intent": "GetResults",
+      "slots": [{
+        "name": "team",
+        "type": "team"
+        }]
+    },
+    {
       "intent": "ReadTable"
     },
     {
-      "intent": "ReadFixtures"
+      "intent": "GetFixtures"
     },
     {
       "intent": "AMAZON.NextIntent"
