@@ -19,123 +19,31 @@ import readTable from '../helpers/read-table';
 import snapSlot from '../helpers/snap-slot';
 
 // Handler
-const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
+const teamStateHandlers = CreateStateHandler(STATES.TEAM, {
 
   'NewSession': function () {
-    delete this.attributes.expecting;
-    // GET CURRENT MATCHDAY
-    rp({
-      headers: { 'X-Auth-Token': API_TOKEN },
-      url: 'http://api.football-data.org/v1/competitions/445', // prem league this year
-      dataType: 'json',
-      type: 'GET',
-    })
-      .then((response) => {
-        const data = JSON.parse(response);
-        this.attributes.currentMatchday = data.currentMatchday;
-        // INSERT DIRECT LAUNCH LOGIC HERE SO I ALWAYS RETREIVE CURRENT MATCHDAY FIRST
-        if (this.event.request.intent && DIRECT_LAUNCHES.includes(this.event.request.intent.name)) {
-          this.emitWithState(`${this.event.request.intent.name}`);
-        }
-        else {
-          this.emitWithState('Welcome');
-        }
-      })
-      .catch((err) => {
-        console.log('API ERROR: ', err);
-        this.emitWithState('Welcome');
-      });
-  },
-
-  'Welcome': function () {
-    if (this.attributes.myTeam) {
-      this.emit(':ask', `Welcome back to Premier League. You can hear about ${formatString(this.attributes.myTeam)}, another team, or ask for the league table, fixtures, or results. Which will it be?`, GENERIC_REPROMPT);
-    }
-    else {
-      this.emit(':ask', 'Welcome back to Premier League. You can hear about a team, or ask for the league table, fixtures, or results. Which will it be?', GENERIC_REPROMPT);
-    }
-  },
-
-  'MainMenu': function () {
-    // GO TO MAIN STATE & PLAY MENU (menu needs two states, one for with fav team, one without)
-    if (this.attributes.myTeam) {
-      this.emit(':ask', `You can hear about ${formatString(this.attributes.myTeam)}, another team, or ask for the league table, fixtures, or results. Which will it be?`, GENERIC_REPROMPT);
-    }
-    else {
-      this.emit(':ask', 'You can hear about a team, or ask for the league table, fixtures, or results. Which will it be?', GENERIC_REPROMPT);
-    }
-  },
-
-  'HandleTeamOnly': function () {
-    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
-      this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
-      if (this.attributes.teamSlot) {
-        this.handler.state = STATES.TEAM;
-        this.emitWithState('TeamMenu');
-      }
-      else {
-        this.emitWithState('Unhandled');
-      }
-    }
-    else {
-      this.emitWithState('Unhandled');
-    }
-  },
-
-  'HandleTeamPhrase': function () {
-    if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
-      this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
-      if (this.attributes.teamSlot) {
-        this.handler.state = STATES.TEAM;
-        this.emitWithState('TeamMenu');
-      }
-      else {
-        this.emitWithState('Unhandled');
-      }
-    }
-    else {
-      this.emitWithState('Unhandled');
-    }
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('NewSession');
   },
 
   'GetTable': function () {
-    delete this.attributes.expecting;
-    readTable.call(this);
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('GetTable');
   },
 
   'GetFixtures': function () {
-    delete this.attributes.expecting;
-    // GET THE CURRENT GAMEWEEK'S FIXTURES
-    getRemainingFixtures.call(this, this.attributes.currentMatchday);
-  },
-
-  'TellFixtures': function () {
-    // NO REMAINING FIXTURES THIS WEEK, GET NEXT GAMEWEEKS FIXTURES (IF NOT LAST GAMEWEEK)
-    if (Object.keys(this.attributes.remainingFixtures).length === 0 && this.attributes.currentMatchday < 38) {
-      getRemainingFixtures.call(this, this.attributes.currentMatchday + 1);
-    }
-    // GOT FIXTURES, READ THEM TO USER
-    else {
-      this.emit(':ask', `Here are the current gameweek's remaining fixtures. ${readFixtures(this.attributes.remainingFixtures)} How else can I help?`, 'How else can I help?');
-    }
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('GetFixtures');
   },
 
   'GetResults': function () {
-    // const team = this.event.request.intent.slots.team.value.toLowerCase() || false;
-    const team = this.event.request.intent.slots.team.value ? snapSlot(this.event.request.intent.slots.team.value.toLowerCase()) : false;
-    getCurrentResults.call(this, team, this.attributes.currentMatchday);
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('GetResults');
   },
 
-  'TellResults': function () {
-    // IF NO RESULTS YET, GET THE LAST GAMEWEEK INSTEAD
-    if (this.attributes.currentResults[0].homeGoals === null) {
-      getCurrentResults.call(this, this.attributes.teamSlot, this.attributes.currentMatchday - 1);
-    }
-    else {
-      readResults.call(this, this.attributes.teamSlot, this.attributes.currentResults);
-    }
+  'TeamMenu': function () {
+    this.emit(':ask', `${this.attributes.teamSlot} are currently 1st. You can hear stats, upcoming fixtures, or recent results. Which will it be?`, 'Team are currently 1st. You can hear stats, upcoming fixtures, or recent results. Which will it be?');
   },
-
 
   // 'CompareSeasons': function () {
   //   delete this.attributes.expecting;
@@ -234,11 +142,13 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AMAZON.StartOverIntent': function () {
+    this.handler.state = STATES.MAIN;
     this.emitWithState('MainMenu');
   },
 
   'AMAZON.StopIntent': function () {
-    this.emit(':tell', 'Goodbye!');
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('AMAZON.StopIntent');
   },
 
   'AMAZON.CancelIntent': function () {
@@ -246,11 +156,12 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AMAZON.HelpIntent': function () {
-    this.emit(':ask', HELP_MESSAGE, GENERIC_REPROMPT);
+    this.handler.state = STATES.MAIN;
+    this.emitWithState('AMAZON.HelpIntent');
   },
 
   'Unhandled': function () {
-    console.log('This is the main state unhandled intent.');
+    console.log('This is the team state unhandled intent.');
     this.emitWithState('AMAZON.HelpIntent');
   },
 
@@ -261,4 +172,4 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
 });
 
-export default mainStateHandlers;
+export default teamStateHandlers;

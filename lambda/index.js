@@ -6,6 +6,7 @@ import {
 
 import firstStateHandlers from './handlers/first-state-handlers';
 import mainStateHandlers from './handlers/main-state-handlers';
+import teamStateHandlers from './handlers/team-state-handlers';
 
 module.exports.handler = function (event, context) {
   const alexa = Alexa.handler(event, context);
@@ -14,7 +15,8 @@ module.exports.handler = function (event, context) {
   alexa.appId = APP_ID;
   alexa.registerHandlers(
     firstStateHandlers,
-    mainStateHandlers
+    mainStateHandlers,
+    teamStateHandlers
   );
 
   alexa.execute();
