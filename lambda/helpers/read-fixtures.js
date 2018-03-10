@@ -1,4 +1,4 @@
-import formatString from './format-string';
+import formatTeam from './format-team';
 
 module.exports = function (fixtures) {
 
@@ -12,14 +12,14 @@ module.exports = function (fixtures) {
 
     for (let j = 0; j < fixturesArray[i].length; j++) {
       if (j === 0) {
-        string += `${formatString(fixturesArray[i][j].home)} host ${formatString(fixturesArray[i][j].away)}`;
+        string += `${formatTeam(fixturesArray[i][j].home)} host ${formatTeam(fixturesArray[i][j].away)}`;
       }
       else if (j !== fixturesArray[i].length - 1) {
-        string += `, ${formatString(fixturesArray[i][j].home)} host ${formatString(fixturesArray[i][j].away)}`;
+        string += `, ${formatTeam(fixturesArray[i][j].home)} host ${formatTeam(fixturesArray[i][j].away)}`;
       }
       else {
         // extra comma at start for pause
-        string += `, and ${formatString(fixturesArray[i][j].home)} host ${formatString(fixturesArray[i][j].away)}`;
+        string += `, and ${formatTeam(fixturesArray[i][j].home)} host ${formatTeam(fixturesArray[i][j].away)}`;
       }
     }
     string += '. ';

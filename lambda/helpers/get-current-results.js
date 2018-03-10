@@ -27,6 +27,7 @@ module.exports = function (team, matchday) {
     })
     .catch((err) => {
       console.log('API ERROR: ', err);
-      this.emit(':ask', 'Sorry, I\'m having trouble finding the results at the moment. How else can I help?', 'How else can I help?');
+      this.attributes.expecting = 'anythingElse';
+      this.emit(':ask', 'Sorry, I\'m having trouble finding the results at the moment. Can I help with anything else today?', 'Can I help with anything else today?');
     });
 };

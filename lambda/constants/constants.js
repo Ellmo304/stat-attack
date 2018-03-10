@@ -11,6 +11,7 @@ module.exports = {
     TEAM: 'TEAM',
   },
 
+  HELP_MESSAGE: '',
 
   GENERIC_REPROMPT: 'Try saying a team name, or, ask for the league table, fixtures, or results. Which will it be?',
 

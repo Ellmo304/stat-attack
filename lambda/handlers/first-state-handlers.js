@@ -4,7 +4,7 @@ import { CreateStateHandler } from 'alexa-sdk';
 import { STATES, API_TOKEN } from '../constants/constants';
 
 // Helpers
-import formatString from '../helpers/format-string';
+import formatTeam from '../helpers/format-team';
 import snapSlot from '../helpers/snap-slot';
 
 // Handler
@@ -36,7 +36,7 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
     this.attributes.myTeam = snapSlot(this.attributes.teamSlot);
     if (this.attributes.myTeam) {
       this.attributes.expecting = 'confirmTeam';
-      this.emit(':ask', `You support ${formatString(this.attributes.myTeam)}. Is this correct?`, `You support ${formatString(this.attributes.myTeam)}. Is this correct?`);
+      this.emit(':ask', `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`, `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`);
     }
     else {
       this.emitWithState('Unhandled');
@@ -82,7 +82,7 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
       this.emit(':ask', 'Would you like to set up a favourite team?', 'Would you like me to remember your favourite premier league team?');
     }
     else if (this.attributes.expecting === 'confirmTeam') {
-      this.emit(':ask', `You support ${formatString(this.attributes.myTeam)}. Is this correct?`, `You support ${formatString(this.attributes.myTeam)}. Is this correct?`);
+      this.emit(':ask', `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`, `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`);
     }
     else {
       this.emit(':ask', 'Sorry, I didn\'t catch that, which team do you support?', 'Sorry, I didn\'t catch that, which team do you support?');

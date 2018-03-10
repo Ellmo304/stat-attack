@@ -54,6 +54,15 @@ GetResults what is the current {team} score
 GetResults whats the {team} score at the moment
 GetResults what is the {team} score at the moment
 
+GetStats stats
+GetStats get stats
+GetStats give me stats
+GetStats give me the stats
+GetStats let me hear the stats
+GetStats can i hear the stats
+GetStats i want the stats
+GetStats statistics
+
 
 HandleTeamOnly {team}
 
@@ -64,6 +73,10 @@ HandleTeamPhrase my team's {team}
 HandleTeamPhrase the {team}
 HandleTeamPhrase {team} news
 HandleTeamPhrase {team} please
+HandleTeamPhrase tell me about {team}
+HandleTeamPhrase hear about {team}
+HandleTeamPhrase about {team}
+HandleTeamPhrase hear {team}
 
 CompareSeasons compare seasons
 
