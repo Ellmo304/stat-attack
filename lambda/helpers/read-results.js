@@ -19,16 +19,15 @@ module.exports = function (team, scores) {
 
   let string = '';
 
-  if (results.length > 1 && this.attributes.currentMatchday === this.attributes.matchdaySlot) {
+  const gameweekOver = results.filter(game => game.status !== 'FINISHED').length === 0;
+
+  if (results.length > 1 && !gameweekOver) {
     string += `Here are the scores so far from gameweek ${this.attributes.currentMatchday}. `;
   }
-  else if (results.length > 1 && this.attributes.currentMatchday !== this.attributes.matchdaySlot) {
-    string += `Here are the scores from gameweek ${this.attributes.currentMatchday - 1}. `;
+  else if (results.length > 1 && gameweekOver) {
+    string += `Here are the scores from gameweek ${results[0].matchday}. `;
   }
   for (let i = 0; i < results.length; i++) {
-    // if (i === results.length - 1 && results.length > 1) {
-    //   string += 'And ';
-    // }
     if (results[i].status !== 'FINISHED' && results[i].homeGoals === null && results.length === 1) {
       string += `The match betwen ${formatTeam(results[i].home)} and ${formatTeam(results[i].away)} has not started yet.`;
     }
@@ -37,7 +36,7 @@ module.exports = function (team, scores) {
       string += `${formatTeam(results[i].home)}: ${results[i].homeGoals === 0 ? 'nil' : results[i].homeGoals}, ${formatTeam(results[i].away)}: ${results[i].awayGoals === 0 ? 'nil' : results[i].awayGoals}. `;
     }
     else if (results[i].homeGoals !== null) {
-      string += this.attributes.currentMatchday === this.attributes.matchdaySlot ? `At ${snapStadium(results[i].home)}, it's finished: ` : '';
+      string += !gameweekOver ? `At ${snapStadium(results[i].home)}, it's finished: ` : '';
       string += `${formatTeam(results[i].home)}: ${results[i].homeGoals === 0 ? 'nil' : results[i].homeGoals}, ${formatTeam(results[i].away)}: ${results[i].awayGoals === 0 ? 'nil' : results[i].awayGoals}. `;
     }
   }

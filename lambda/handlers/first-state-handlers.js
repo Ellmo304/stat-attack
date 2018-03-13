@@ -33,7 +33,7 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
   },
 
   'ChooseSide': function () {
-    this.attributes.myTeam = snapSlot(this.attributes.teamSlot);
+    this.attributes.myTeam = this.attributes.teamSlot;
     if (this.attributes.myTeam) {
       this.attributes.expecting = 'confirmTeam';
       this.emit(':ask', `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`, `You support ${formatTeam(this.attributes.myTeam)}. Is this correct?`);
@@ -91,8 +91,14 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
 
   'HandleTeamPhrase': function () {
     if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value && this.attributes.expecting === 'awaitingTeam') {
-      this.attributes.teamSlot = this.event.request.intent.slots.team.value.toLowerCase();
-      this.emitWithState('ChooseSide');
+      this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
+      if (this.attributes.teamSlot) {
+        this.emitWithState('ChooseSide');
+      }
+      else {
+        this.attributes.expecting = 'setup';
+        this.emit(':ask', 'Sorry, I only know about Premier League teams. Would you like to set up a favourite team?', 'Would you like to set up a favourite team?');
+      }
     }
     else {
       this.emitWithState('Unhandled');
@@ -101,8 +107,14 @@ const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
 
   'HandleTeamOnly': function () {
     if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value && this.attributes.expecting === 'awaitingTeam') {
-      this.attributes.teamSlot = this.event.request.intent.slots.team.value.toLowerCase();
-      this.emitWithState('ChooseSide');
+      this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
+      if (this.attributes.teamSlot) {
+        this.emitWithState('ChooseSide');
+      }
+      else {
+        this.attributes.expecting = 'setup';
+        this.emit(':ask', 'Sorry, I only know about Premier League teams. Would you like to set up a favourite team?', 'Would you like to set up a favourite team?');
+      }
     }
     else {
       this.emitWithState('Unhandled');

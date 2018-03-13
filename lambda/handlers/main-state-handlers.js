@@ -77,7 +77,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
         this.emitWithState('TeamMenu');
       }
       else {
-        this.emitWithState('Unhandled');
+        this.emit(':ask', 'Sorry, I only know about Premier League teams. Which team would you like to hear about?', 'Which team would you like to hear about?');
       }
     }
     else {
@@ -94,7 +94,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
         this.emitWithState('TeamMenu');
       }
       else {
-        this.emitWithState('Unhandled');
+        this.emit(':ask', 'Sorry, I only know about Premier League teams. Which team would you like to hear about?', 'Which team would you like to hear about?');
       }
     }
     else {
@@ -140,6 +140,10 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     else {
       readResults.call(this, this.attributes.teamSlot, this.attributes.currentResults);
     }
+  },
+
+  'AnotherTeam': function () {
+    this.emit(':ask', 'Sure, which team would you like to hear about?', 'Which team would you like to hear about?');
   },
 
   'AMAZON.YesIntent': function () {

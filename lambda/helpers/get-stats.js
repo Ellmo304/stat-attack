@@ -4,7 +4,6 @@ import formatTeam from './format-team';
 import formatPosition from './format-position';
 
 module.exports = function () {
-  this.attributes.expecting = 'anythingElse';
   // GET LAST YEARS POSITION AT THIS MATCHDAY
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
@@ -29,12 +28,14 @@ module.exports = function () {
       }
 
       // FORM RESPONSE SAYING POSITIONS & COMPARING STATS
+      this.attributes.expecting = 'moreTeam';
       const search = this.attributes.currentSearch;
-      const ending = search.lastYearsPosition === undefined ? '' : `This time last season, ${formatPosition(search.selectedTeam)} had played ${search.lastYearsPlayedGames} games, winning ${search.lastYearsWins}, drawing ${search.lastYearsDraws} and losing ${search.lastYearsLosses}. They had scored ${search.lastYearsGoalsFor} goals and conceded ${search.lastYearsGoalsAgainst}, giving them a goal difference of ${search.lastYearsGoalDifference}. `;
-      this.emit(':ask', `${formatTeam(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday - 1}. This time last season ${formatTeam(selectedTeam)} were ${search.lastYearsPosition === undefined ? 'in the Championship. ' : formatPosition(search.lastYearsPosition)}. ` + `This season, ${formatTeam(search.selectedTeam)} have played ${search.thisYearsPlayedGames} games, winning ${search.thisYearsWins}, drawing ${search.thisYearsDraws} and losing ${search.thisYearsLosses}. They have scored ${search.thisYearsGoalsFor} goals and conceded ${search.thisYearsGoalsAgainst}, giving them a goal difference of ${search.thisYearsGoalDifference}. ${ending} Can I help with anything else today?`, 'Can I help with anything else today?');
+      const ending = search.lastYearsPosition === undefined ? '' : `This time last season, ${formatTeam(search.selectedTeam)} had played ${search.lastYearsPlayedGames} games, winning ${search.lastYearsWins}, drawing ${search.lastYearsDraws} and losing ${search.lastYearsLosses}. They had scored ${search.lastYearsGoalsFor} goals and conceded ${search.lastYearsGoalsAgainst}, giving them a goal difference of ${search.lastYearsGoalDifference}. `;
+      this.emit(':ask', `${formatTeam(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table on matchday ${search.thisYearsMatchday}. This time last season ${formatTeam(selectedTeam)} were ${search.lastYearsPosition === undefined ? 'in the Championship' : formatPosition(search.lastYearsPosition)}. ` + `This season, ${formatTeam(search.selectedTeam)} have played ${search.thisYearsPlayedGames} games, winning ${search.thisYearsWins}, drawing ${search.thisYearsDraws} and losing ${search.thisYearsLosses}. They have scored ${search.thisYearsGoalsFor} goals and conceded ${search.thisYearsGoalsAgainst}, giving them a goal difference of ${search.thisYearsGoalDifference}. ${ending} Would you like more on ${formatTeam(search.selectedTeam)}?`, `Would you like to hear more on ${formatTeam(search.selectedTeam)}?`); // eslint-disable-line
     })
     .catch((err) => {
       console.log('API ERROR: ', err);
+      this.attributes.expecting = 'anythingElse';
       this.emit(':ask', 'Sorry, I\'m having trouble get that information at the moment. Can I help with anything else today?', 'Can I help with anything else today?');
     });
 };

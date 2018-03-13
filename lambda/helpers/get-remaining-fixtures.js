@@ -15,7 +15,7 @@ module.exports = function (matchday) {
       const data = JSON.parse(response);
       const fixtures = {};
       for (let i = 0; i < data.fixtures.length; i++) {
-        if (data.fixtures[i].status !== 'FINISHED') {
+        if (data.fixtures[i].status !== 'FINISHED' && data.fixtures[i].status !== 'POSTPONED') {
           // GROUP EACH FIXTURE BY DAY E.G(fixtures.Monday: [game1, game2])
           if (!fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`]) {
             fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`] = [];

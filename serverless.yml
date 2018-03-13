@@ -34,10 +34,16 @@ custom:
   defaultStage: dev
   profiles:
     dev: personal
+    prodEU: personal
+    prodUS: personal
   regions:
     dev: eu-west-1
+    prodEU: eu-west-1
+    prodUS: us-east-1
   roles:
     dev: arn:aws:iam::852347509954:role/lambda_full
+    prodEU: arn:aws:iam::852347509954:role/lambda_full
+    prodUS: arn:aws:iam::852347509954:role/lambda_full
   optimize:
     debug: false # set to true to keep _optimize folder, required if running npm test
     minify: false # no need to minify every time

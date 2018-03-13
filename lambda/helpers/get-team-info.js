@@ -33,7 +33,7 @@ module.exports = function () {
         }
       }
       const search = this.attributes.currentSearch;
-      this.emit(':ask', `${formatTeam(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table after matchday ${search.thisYearsMatchday - 1}. You can hear stats, upcoming fixtures, or recent results. Which will it be?`, 'You can hear stats, upcoming fixtures, or recent results. Which will it be?');
+      this.emit(':ask', `${formatTeam(selectedTeam)} are currently ${formatPosition(search.thisYearsPosition)} in the Premier League table on matchday ${search.thisYearsMatchday}. You can hear ${formatTeam(selectedTeam)}'s stats, upcoming fixtures, or recent results. Which will it be?`, `You can hear ${formatTeam(selectedTeam)}'s stats, upcoming fixtures, or recent results. Which will it be?`);
     })
     .catch((err) => {
       console.log('API ERROR: ', err);

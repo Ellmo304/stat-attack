@@ -11,11 +11,11 @@ module.exports = {
     TEAM: 'TEAM',
   },
 
-  HELP_MESSAGE: '',
+  HELP_MESSAGE: 'To hear information about a specific team, just say a team name. Otherwise, try asking me for the league table, fixtures, or results. Now, how can I help?',
 
   GENERIC_REPROMPT: 'Try saying a team name, or, ask for the league table, fixtures, or results. Which will it be?',
 
-  DIRECT_LAUNCHES: ['HandleTeamOnly', 'HandleTeamPhrase', 'ReadTable', 'GetFixtures', 'GetResults'],
+  DIRECT_LAUNCHES: ['HandleTeamOnly', 'HandleTeamPhrase', 'GetTable', 'GetFixtures', 'GetResults'],
 
 //
 //

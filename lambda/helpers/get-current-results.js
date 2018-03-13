@@ -18,6 +18,7 @@ module.exports = function (team, matchday) {
           homeGoals: data.fixtures[i].result.goalsHomeTeam,
           awayGoals: data.fixtures[i].result.goalsAwayTeam,
           status: data.fixtures[i].status,
+          matchday: data.fixtures[i].matchday,
         });
       }
       this.attributes.currentResults = results;

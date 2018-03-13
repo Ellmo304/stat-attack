@@ -1,16 +1,30 @@
-ReadTable whats the table
-ReadTable whats the league table
-ReadTable whats the premier league table
-ReadTable read the premier league table
-ReadTable read the league table
-ReadTable read the table
-ReadTable read me the premier league table
-ReadTable read me the league table
-ReadTable read me the table
-ReadTable give me the current table
-ReadTable give me the table
-ReadTable give me the league table
+GetTable the table
+GetTable the league table
+GetTable whats the table
+GetTable whats the league table
+GetTable whats the premier league table
+GetTable read the premier league table
+GetTable read the league table
+GetTable read the table
+GetTable read me the premier league table
+GetTable read me the league table
+GetTable read me the table
+GetTable give me the current table
+GetTable give me the table
+GetTable give me the league table
 
+GetFixtures fixtures
+GetFixtures the fixtures
+GetFixtures give me the fixtures
+GetFixtures give me the upcoming fixtures
+GetFixtures hear fixtures
+GetFixtures hear the fixtures
+GetFixtures hear upcoming fixtures
+GetFixtures hear the upcoming fixtures
+GetFixtures upcoming fixtures
+GetFixtures league fixtures
+GetFixtures the league fixtures
+GetFixtures fixtures please
 GetFixtures what are this weeks fixtures
 GetFixtures what are this weekends fixtures
 GetFixtures what are the fixtures
@@ -18,6 +32,24 @@ GetFixtures what are the remaining fixtures
 GetFixtures what are the remaining fixtures this week
 GetFixtures what are the remaining fixtures this weekend
 
+GetResults scores
+GetResults the scores
+GetResults recent scores
+GetResults hear recent scores
+GetResults hear the recent scores
+GetResults results
+GetResults the results
+GetResults hear recent results
+GetResults hear the recent results
+GetResults recent results
+GetResults hear results
+GetResults hear scores
+GetResults hear the scores
+GetResults hear the results
+GetResults scores please
+GetResults tell me the scores please
+GetResults give me the scores
+GetResults give me the results
 GetResults what are the scores
 GetResults what are the scores so far
 GetResults what are the scores at the moment
@@ -55,6 +87,8 @@ GetResults whats the {team} score at the moment
 GetResults what is the {team} score at the moment
 
 GetStats stats
+GetStats hear stats
+GetStats hear the stats
 GetStats get stats
 GetStats give me stats
 GetStats give me the stats
@@ -63,6 +97,13 @@ GetStats can i hear the stats
 GetStats i want the stats
 GetStats statistics
 
+AnotherTeam team news
+AnotherTeam another teams news
+AnotherTeam my teams news
+AnotherTeam another team
+AnotherTeam hear another team
+AnotherTeam hear about another team
+AnotherTeam hear about my team
 
 HandleTeamOnly {team}
 

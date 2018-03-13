@@ -6,7 +6,11 @@
   "author": "MonkStudios",
   "scripts": {
     "dd": "serverless deploy -v --stage dev",
-    "ud": "serverless deploy function -f funcOne --stage dev"
+    "ud": "serverless deploy function -f funcOne --stage dev",
+    "deu": "serverless deploy -v --stage prodEU",
+    "ueu": "serverless deploy function -f funcOne --stage prodEU",
+    "dus": "serverless deploy -v --stage prodUS",
+    "uus": "serverless deploy function -f funcOne --stage prodUS"
   },
   "dependencies": {
     "alexa-sdk": "^1.0.14",

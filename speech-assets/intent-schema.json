@@ -25,10 +25,13 @@
         }]
     },
     {
+      "intent": "AnotherTeam"
+    },
+    {
       "intent": "GetStats"
     },
     {
-      "intent": "ReadTable"
+      "intent": "GetTable"
     },
     {
       "intent": "GetFixtures"
