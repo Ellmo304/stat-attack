@@ -29,6 +29,7 @@ functions:
       APP_ID: ${file(env.yml):APP_ID}
       DYNAMODB_TABLE_NAME: ${file(env.yml):DYNAMODB_TABLE_NAME}
       API_TOKEN: ${file(env.yml):API_TOKEN}
+      GA_ID:  ${file(env.yml):GA_ID}
 
 custom:
   defaultStage: dev

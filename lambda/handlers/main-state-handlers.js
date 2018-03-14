@@ -17,12 +17,16 @@ import getCurrentResults from '../helpers/get-current-results';
 import readResults from '../helpers/read-results';
 import readTable from '../helpers/read-table';
 import snapSlot from '../helpers/snap-slot';
+import gaTrack from '../helpers/ga-track';
 
 // Handler
 const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'NewSession': function () {
     delete this.attributes.expecting;
+    const deviceType = this.event.context.System.device.supportedInterfaces.Display ? 'Screen-based device' : 'Voice-only device';
+    // GOOGLE ANALYTICS
+    gaTrack(this.event.session.user.userId, 'New session', deviceType);
     // GET CURRENT MATCHDAY
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
@@ -58,6 +62,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'MainMenu': function () {
+    gaTrack(this.event.session.user.userId, 'Main menu');
     this.attributes.expecting = false;
     // GO TO MAIN STATE & PLAY MENU (menu needs two states, one for with fav team, one without)
     if (this.attributes.myTeam) {
@@ -73,10 +78,12 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
       this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
       if (this.attributes.teamSlot) {
+        gaTrack(this.event.session.user.userId, 'Valid team selected', this.attributes.teamSlot);
         this.handler.state = STATES.TEAM;
         this.emitWithState('TeamMenu');
       }
       else {
+        gaTrack(this.event.session.user.userId, 'Invalid team selected', this.attributes.teamSlot);
         this.emit(':ask', 'Sorry, I only know about Premier League teams. Which team would you like to hear about?', 'Which team would you like to hear about?');
       }
     }
@@ -90,10 +97,13 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     if (this.event.request.intent.slots.team && this.event.request.intent.slots.team.value) {
       this.attributes.teamSlot = snapSlot(this.event.request.intent.slots.team.value.toLowerCase());
       if (this.attributes.teamSlot) {
+        gaTrack(this.event.session.user.userId, 'Valid team selected', this.attributes.teamSlot);
+
         this.handler.state = STATES.TEAM;
         this.emitWithState('TeamMenu');
       }
       else {
+        gaTrack(this.event.session.user.userId, 'Invalid team selected', this.attributes.teamSlot);
         this.emit(':ask', 'Sorry, I only know about Premier League teams. Which team would you like to hear about?', 'Which team would you like to hear about?');
       }
     }
@@ -103,11 +113,13 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'GetTable': function () {
+    gaTrack(this.event.session.user.userId, 'Read league table');
     delete this.attributes.expecting;
     readTable.call(this);
   },
 
   'GetFixtures': function () {
+    gaTrack(this.event.session.user.userId, 'Read league fixtures');
     delete this.attributes.expecting;
     // GET THE CURRENT GAMEWEEK'S FIXTURES
     getRemainingFixtures.call(this, this.attributes.currentMatchday);
@@ -129,6 +141,12 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     this.attributes.expecting = false;
     // const team = this.event.request.intent.slots.team.value.toLowerCase() || false;
     const team = this.event.request.intent.slots.team.value ? snapSlot(this.event.request.intent.slots.team.value.toLowerCase()) : false;
+    if (team) {
+      gaTrack(this.event.session.user.userId, 'Read specific result', team);
+    }
+    else {
+      gaTrack(this.event.session.user.userId, 'Read league results');
+    }
     getCurrentResults.call(this, team, this.attributes.currentMatchday);
   },
 
@@ -143,12 +161,14 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AnotherTeam': function () {
+    gaTrack(this.event.session.user.userId, 'Another team');
     this.emit(':ask', 'Sure, which team would you like to hear about?', 'Which team would you like to hear about?');
   },
 
   'AMAZON.YesIntent': function () {
     // USER DOES WANT TO HEAR BOTTOM HALF OF TABLE
     if (this.attributes.expecting === 'continueTable') {
+      gaTrack(this.event.session.user.userId, 'Continue table');
       this.attributes.expecting = 'anythingElse';
       const { standings } = this.attributes;
       this.emit(
@@ -169,6 +189,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   'AMAZON.NoIntent': function () {
     // USER DOES NOT WANT TO HEAR BOTTOM HALF OF TABLE, GO TO MENU
     if (this.attributes.expecting === 'continueTable') {
+      gaTrack(this.event.session.user.userId, 'Don\'t continue table');
       this.attributes.expecting = false;
       this.emitWithState('MainMenu');
     }
@@ -186,6 +207,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AMAZON.StopIntent': function () {
+    gaTrack(this.event.session.user.userId, 'Stop');
     this.emit(':tell', 'Goodbye!');
   },
 
@@ -194,11 +216,13 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'AMAZON.HelpIntent': function () {
+    gaTrack(this.event.session.user.userId, 'Help');
     this.attributes.expecting = false;
     this.emit(':ask', HELP_MESSAGE, GENERIC_REPROMPT);
   },
 
   'Unhandled': function () {
+    gaTrack(this.event.session.user.userId, 'Unhandled', 'Main');
     console.log('This is the main state unhandled intent.');
     switch (this.attributes.expecting) {
       case 'continueTable': this.emit(':ask', 'Would you like to hear the rest of the table?', 'Would you like me to read the bottom half of the table?');
@@ -210,6 +234,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
   },
 
   'SessionEndedRequest': function () {
+    gaTrack(this.event.session.user.userId, 'Session ended unexpectedly', 'Main');
     delete this.attributes.expecting;
     this.emit(':saveState', true);
   },

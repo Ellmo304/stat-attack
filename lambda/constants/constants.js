@@ -3,6 +3,7 @@ module.exports = {
   APP_ID: process.env.APP_ID || '',
   DYNAMODB_TABLE_NAME: process.env.DYNAMODB_TABLE_NAME || '',
   API_TOKEN: process.env.API_TOKEN || '',
+  GA_ID: process.env.GA_ID || '',
 
   // Skill states
   STATES: {
