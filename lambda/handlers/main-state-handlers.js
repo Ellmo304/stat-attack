@@ -152,7 +152,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'TellResults': function () {
     // IF NO RESULTS YET, GET THE LAST GAMEWEEK INSTEAD
-    if (this.attributes.currentResults[0].homeGoals === null) {
+    if (this.attributes.currentResults[0].homeGoals === null && this.attributes.currentResults[0].status !== 'POSTPONED') {
       getCurrentResults.call(this, this.attributes.teamSlot, this.attributes.currentMatchday - 1);
     }
     else {

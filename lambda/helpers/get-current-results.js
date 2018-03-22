@@ -10,6 +10,7 @@ module.exports = function (team, matchday) {
   })
     .then((response) => {
       const data = JSON.parse(response);
+      console.log('DATA: ', data);
       const results = [];
       for (let i = 0; i < data.fixtures.length; i++) {
         results.push({

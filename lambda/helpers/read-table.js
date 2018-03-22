@@ -11,6 +11,7 @@ module.exports = function () {
   })
     .then((response) => {
       const data = JSON.parse(response);
+      console.log('DATA: ', data);
       const standings = [];
       for (let i = 0; i < data.standing.length; i++) {
         standings.push({ name: data.standing[i].teamName, points: data.standing[i].points });
