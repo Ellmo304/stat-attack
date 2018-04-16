@@ -208,7 +208,15 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'AMAZON.StopIntent': function () {
     gaTrack(this.event.session.user.userId, 'Stop');
-    this.emit(':tell', 'Goodbye!');
+    let sessionCount = this.attributes.sessionCount || 0;
+    sessionCount++;
+    this.attributes.sessionCount = sessionCount;
+    if (sessionCount === 1 || sessionCount === 4) {
+      this.emit(':tell', 'If you enjoyed this skill, please give us a positive rating on the skill store! See you soon!');
+    }
+    else {
+      this.emit(':tell', 'Goodbye, see you soon!');
+    }
   },
 
   'AMAZON.CancelIntent': function () {
