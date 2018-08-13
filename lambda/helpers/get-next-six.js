@@ -9,20 +9,20 @@ module.exports = function () {
   // GET NEXT SIX FIXTURES FOR SELECTED TEAM
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
-    url: `http://api.football-data.org/v1/teams/${id}/fixtures`, // prem league this year
+    url: `http://api.football-data.org/v2/teams/${id}/matches`, // prem league this year
     dataType: 'json',
     type: 'GET',
   })
     .then((response) => {
       const data = JSON.parse(response);
-      console.log('FIXTURES: ', data.fixtures);
+      console.log('FIXTURES: ', data.matches);
       const fixtures = [];
       let counter = 0;
-      for (let i = 0; i < data.fixtures.length; i++) {
-        if (data.fixtures[i].status !== 'FINISHED' && data.fixtures[i].status !== 'POSTPONED' && data.fixtures[i]._links.competition.href.split('competitions/')[1] === '445' && counter < 6) { // eslint-disable-line
-          console.log('fixture: ', data.fixtures[i]);
-          const opposition = data.fixtures[i].homeTeamName === team ? data.fixtures[i].awayTeamName : data.fixtures[i].homeTeamName;
-          const location = data.fixtures[i].homeTeamName === team ? 'at home' : 'away';
+      for (let i = 0; i < data.matches.length; i++) {
+        if (data.matches[i].status !== 'FINISHED' && data.matches[i].status !== 'POSTPONED' && data.matches[i].competition.id === 2021 && counter < 6) { // eslint-disable-line
+          console.log('fixture: ', data.matches[i]);
+          const opposition = data.matches[i].homeTeam.name === team ? data.matches[i].awayTeam.name : data.matches[i].homeTeam.name;
+          const location = data.matches[i].homeTeam.name === team ? 'at home' : 'away';
           fixtures.push(`${formatTeam(opposition)} ${location}`);
           counter++;
         }

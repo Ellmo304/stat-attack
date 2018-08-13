@@ -8,27 +8,27 @@ module.exports = function () {
   // GET CURRENT POSITION + CURRENT MATCHDAY FOR SELECTED TEAM
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
-    url: 'http://api.football-data.org/v1/competitions/445/leagueTable', // prem league this year
+    url: 'http://api.football-data.org/v2/competitions/2021/standings', // prem league this year
     dataType: 'json',
     type: 'GET',
   })
     .then((response) => {
       const data = JSON.parse(response);
       const selectedTeam = this.attributes.teamSlot;
-      const thisYearsMatchday = data.matchday;
-      for (let i = 0; i < data.standing.length; i++) {
-        if (data.standing[i].teamName === selectedTeam) {
+      const thisYearsMatchday = data.season.currentMatchday;
+      for (let i = 0; i < data.standings[0].table.length; i++) {
+        if (data.standings[0].table[i].team.name === selectedTeam) {
           this.attributes.currentSearch = {
             selectedTeam,
             thisYearsMatchday,
-            thisYearsPosition: data.standing[i].position,
-            thisYearsPlayedGames: data.standing[i].playedGames,
-            thisYearsWins: data.standing[i].wins,
-            thisYearsDraws: data.standing[i].draws,
-            thisYearsLosses: data.standing[i].losses,
-            thisYearsGoalsFor: data.standing[i].goals,
-            thisYearsGoalsAgainst: data.standing[i].goalsAgainst,
-            thisYearsGoalDifference: data.standing[i].goalDifference,
+            thisYearsPosition: data.standings[0].table[i].position,
+            thisYearsPlayedGames: data.standings[0].table[i].playedGames,
+            thisYearsWins: data.standings[0].table[i].won,
+            thisYearsDraws: data.standings[0].table[i].draw,
+            thisYearsLosses: data.standings[0].table[i].lost,
+            thisYearsGoalsFor: data.standings[0].table[i].goalsFor,
+            thisYearsGoalsAgainst: data.standings[0].table[i].goalsAgainst,
+            thisYearsGoalDifference: data.standings[0].table[i].goalDifference,
           };
         }
       }

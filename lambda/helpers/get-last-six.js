@@ -9,20 +9,20 @@ module.exports = function () {
   // GET NEXT SIX FIXTURES FOR SELECTED TEAM
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
-    url: `http://api.football-data.org/v1/teams/${id}/fixtures`, // prem league this year
+    url: `http://api.football-data.org/v2/teams/${id}/matches`, // prem league this year
     dataType: 'json',
     type: 'GET',
   })
     .then((response) => {
       const data = JSON.parse(response);
-      console.log('RESULTS: ', data.fixtures);
+      console.log('RESULTS: ', data.matches);
       const results = [];
       let counter = 0;
-      const gamesPlayed = data.fixtures.reverse();
+      const gamesPlayed = data.matches.reverse();
       for (let i = 0; i < gamesPlayed.length; i++) {
-        if (gamesPlayed[i].status === 'FINISHED' && gamesPlayed[i]._links.competition.href.split('competitions/')[1] === '445' && counter < 6) { // eslint-disable-line
+        if (gamesPlayed[i].status === 'FINISHED' && gamesPlayed[i].competition.id === 2021 && counter < 6) { // eslint-disable-line
           console.log('fixture: ', gamesPlayed[i]);
-          results.push(`${formatTeam(gamesPlayed[i].homeTeamName)}: ${gamesPlayed[i].result.goalsHomeTeam > 0 ? gamesPlayed[i].result.goalsHomeTeam : 'nil'}, ${formatTeam(gamesPlayed[i].awayTeamName)}: ${gamesPlayed[i].result.goalsAwayTeam > 0 ? gamesPlayed[i].result.goalsAwayTeam : 'nil'}`);
+          results.push(`${formatTeam(gamesPlayed[i].homeTeam.name)}: ${gamesPlayed[i].score.fullTime.homeTeam > 0 ? gamesPlayed[i].score.fullTime.homeTeam : 'nil'}, ${formatTeam(gamesPlayed[i].awayTeam.name)}: ${gamesPlayed[i].score.fullTime.awayTeam > 0 ? gamesPlayed[i].score.fullTime.awayTeam : 'nil'}`);
           counter++;
         }
       }

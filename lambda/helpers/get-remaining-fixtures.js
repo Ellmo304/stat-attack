@@ -7,20 +7,20 @@ import formatDay from './format-day';
 module.exports = function (matchday) {
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
-    url: `http://api.football-data.org/v1/competitions/445/fixtures/?matchday=${matchday}`, // this gameweek's fixture list
+    url: `http://api.football-data.org/v2/competitions/2021/matches/?matchday=${matchday}`, // this gameweek's fixture list
     dataType: 'json',
     type: 'GET',
   })
     .then((response) => {
       const data = JSON.parse(response);
       const fixtures = {};
-      for (let i = 0; i < data.fixtures.length; i++) {
-        if (data.fixtures[i].status !== 'FINISHED' && data.fixtures[i].status !== 'POSTPONED') {
+      for (let i = 0; i < data.matches.length; i++) {
+        if (data.matches[i].status !== 'FINISHED' && data.matches[i].status !== 'POSTPONED') {
           // GROUP EACH FIXTURE BY DAY E.G(fixtures.Monday: [game1, game2])
-          if (!fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`]) {
-            fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`] = [];
+          if (!fixtures[`${formatDay(Moment(data.matches[i].utcDate).day())}`]) {
+            fixtures[`${formatDay(Moment(data.matches[i].utcDate).day())}`] = [];
           }
-          fixtures[`${formatDay(Moment(data.fixtures[i].date).day())}`].push({ home: data.fixtures[i].homeTeamName, away: data.fixtures[i].awayTeamName, day: formatDay(Moment(data.fixtures[i].date).day()) });
+          fixtures[`${formatDay(Moment(data.matches[i].utcDate).day())}`].push({ home: data.matches[i].homeTeam.name, away: data.matches[i].awayTeam.name, day: formatDay(Moment(data.matches[i].utcDate).day()) });
         }
       }
       this.attributes.remainingFixtures = fixtures;

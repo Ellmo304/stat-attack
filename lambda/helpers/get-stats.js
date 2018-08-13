@@ -7,7 +7,7 @@ module.exports = function () {
   // GET LAST YEARS POSITION AT THIS MATCHDAY
   rp({
     headers: { 'X-Auth-Token': API_TOKEN },
-    url: `http://api.football-data.org/v1/competitions/426/leagueTable/?matchday=${this.attributes.currentMatchday}`, // prem league last year current matchday
+    url: `http://api.football-data.org/v1/competitions/445/leagueTable/?matchday=${this.attributes.currentMatchday}`, // prem league last year current matchday
     dataType: 'json',
     type: 'GET',
   })

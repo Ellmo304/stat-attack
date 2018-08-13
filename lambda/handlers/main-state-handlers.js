@@ -23,20 +23,22 @@ import gaTrack from '../helpers/ga-track';
 const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
 
   'NewSession': function () {
+    // this.emit(':tell', 'Premier League is currently being updated for the new season. Please check back tomorrow.');
+
     delete this.attributes.expecting;
     const deviceType = this.event.context.System.device.supportedInterfaces.Display ? 'Screen-based device' : 'Voice-only device';
-    // GOOGLE ANALYTICS
+    // // GOOGLE ANALYTICS
     gaTrack(this.event.session.user.userId, 'New session', deviceType);
-    // GET CURRENT MATCHDAY
+    // // GET CURRENT MATCHDAY
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
-      url: 'http://api.football-data.org/v1/competitions/445', // prem league this year
+      url: 'http://api.football-data.org/v2/competitions/2021', // prem league this year 2021
       dataType: 'json',
       type: 'GET',
     })
       .then((response) => {
         const data = JSON.parse(response);
-        this.attributes.currentMatchday = data.currentMatchday;
+        this.attributes.currentMatchday = data.currentSeason.currentMatchday;
         // INSERT DIRECT LAUNCH LOGIC HERE SO I ALWAYS RETREIVE CURRENT MATCHDAY FIRST
         if (this.event.request.intent && DIRECT_LAUNCHES.includes(this.event.request.intent.name)) {
           this.emitWithState(`${this.event.request.intent.name}`);
@@ -212,7 +214,7 @@ const mainStateHandlers = CreateStateHandler(STATES.MAIN, {
     sessionCount++;
     this.attributes.sessionCount = sessionCount;
     if (sessionCount === 1 || sessionCount === 4) {
-      this.emit(':tell', 'If you enjoyed this skill, please give us a positive rating on the skill store! See you soon!');
+      this.emit(':tell', 'If you enjoyed this skill, please give us a positive rating on the skill store! If there are any features you want added, let us know in the reviews. See you soon!');
     }
     else {
       this.emit(':tell', 'Goodbye, see you soon!');

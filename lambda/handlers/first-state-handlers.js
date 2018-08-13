@@ -12,18 +12,19 @@ import gaTrack from '../helpers/ga-track';
 const firstStateHandlers = CreateStateHandler(STATES.FIRST, {
 
   'NewSession': function () {
+    // this.emit(':tell', 'Premier League is currently being updated for the new season. Please check back tomorrow.');
     const deviceType = this.event.context.System.device.supportedInterfaces.Display ? 'Screen-based device' : 'Voice-only device';
     // GOOGLE ANALYTICS
     gaTrack(this.event.session.user.userId, 'New session', deviceType);
     // GET CURRENT MATCHDAY
     rp({
       headers: { 'X-Auth-Token': API_TOKEN },
-      url: 'http://api.football-data.org/v1/competitions/445', // prem league this year
+      url: 'http://api.football-data.org/v2/competitions/2021', // prem league this year
       dataType: 'json',
       type: 'GET',
     })
       .then((response) => {
-        this.attributes.currentMatchday = JSON.parse(response).currentMatchday;
+        this.attributes.currentMatchday = JSON.parse(response).currentSeason.currentMatchday;
         // FIRST USE, SETUP FAVOURITE TEAM
         this.attributes.expecting = 'setup';
         this.emit(':ask', 'Welcome to Premier league. Would you like to set up a favourite team?', 'Would you like me to remember your favourite premier league team?');
