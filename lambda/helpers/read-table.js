@@ -14,7 +14,7 @@ module.exports = function () {
       console.log('DATA: ', data);
       const standings = [];
       for (let i = 0; i < data.standings[0].table.length; i++) {
-        standings.push({ name: data.standings[0].table[i].team.name, points: data.standings[0].table[i].points });
+        standings.push({ name: data.standings[0].table[i].team.name, points: `${data.standings[0].table[i].points} ${data.standings[0].table[i].points === 1 ? 'point' : 'points'}` });
       }
       console.log('STANDINGS: ', standings);
       this.attributes.standings = standings;
@@ -23,7 +23,7 @@ module.exports = function () {
       this.emit(
         ':ask',
         `Here are the current standings on matchday ${data.season.currentMatchday}.
-        At the top of the table are ${formatTeam(standings[0].name)} with ${standings[0].points} points. They are followed by ${formatTeam(standings[1].name)} with ${standings[1].points} points, ${formatTeam(standings[2].name)} with ${standings[2].points} points and ${formatTeam(standings[3].name)} with ${standings[3].points} points. ${formatTeam(standings[4].name)} are fifth with ${standings[4].points} points, followed by ${formatTeam(standings[5].name)} with ${standings[5].points} points, ${formatTeam(standings[6].name)} with ${standings[6].points} points, ${formatTeam(standings[7].name)} with ${standings[7].points} points, ${formatTeam(standings[8].name)} with ${standings[8].points} points and ${formatTeam(standings[9].name)} with ${standings[9].points} points. Would you like to hear the rest of the table?`,
+        At the top of the table are ${formatTeam(standings[0].name)} with ${standings[0].points}. They are followed by ${formatTeam(standings[1].name)} with ${standings[1].points}, ${formatTeam(standings[2].name)} with ${standings[2].points} and ${formatTeam(standings[3].name)} with ${standings[3].points}. ${formatTeam(standings[4].name)} are fifth with ${standings[4].points}, followed by ${formatTeam(standings[5].name)} with ${standings[5].points}, ${formatTeam(standings[6].name)} with ${standings[6].points}, ${formatTeam(standings[7].name)} with ${standings[7].points}, ${formatTeam(standings[8].name)} with ${standings[8].points} and ${formatTeam(standings[9].name)} with ${standings[9].points}. Would you like to hear the rest of the table?`,
         'Would you like me to read the bottom half of the table?'
       );
     })
